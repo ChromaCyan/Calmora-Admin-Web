@@ -41,7 +41,7 @@ const CustomSidebar = () => (
         }}
       >
         <Menu.Item
-          to="/specialists-dashboard"
+          to="/"
           primaryText="Specialist Management"
           leftIcon={<PeopleIcon />}
         />
@@ -51,7 +51,7 @@ const CustomSidebar = () => (
           leftIcon={<AssignmentIndIcon />}
         />
         <Menu.Item
-          to="/articles"
+          to="/articles-dashboard"
           primaryText="Article Published"
           leftIcon={<NewspaperIcon />}
         />

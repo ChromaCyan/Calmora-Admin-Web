@@ -165,7 +165,6 @@ const SpecialistManagement = () => {
           </select>
         </Box>
         {/* Specialization Filter */}
-        {/* Specialization Filter */}
         <Box>
           <select
             value={filterSpecialization}
