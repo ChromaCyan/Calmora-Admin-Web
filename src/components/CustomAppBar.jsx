@@ -6,9 +6,11 @@ const CustomAppBar = (props) => {
     <AppBar
       {...props}
       sx={{
-        backgroundColor: "#1E293B",
+        backgroundColor: "rgba(30, 41, 59, 0.85)", // semi-transparent navy
         color: "#FFFFFF",
         boxShadow: "none",
+        backdropFilter: "blur(10px)", // adds a smooth glass effect
+        borderBottom: "1px solid rgba(255, 255, 255, 0.1)", // subtle border
       }}
     >
       <Box
@@ -31,7 +33,6 @@ const CustomAppBar = (props) => {
             Calmora Admin Dashboard
           </Typography>
         </Box>
-
       </Box>
     </AppBar>
   );

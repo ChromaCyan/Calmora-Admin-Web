@@ -25,10 +25,9 @@ export default function MyLoginPage() {
       setLoading(true);
       await login({ username, password, remember });
     } catch (e) {
-      notify(
-        typeof e === "string" ? e : "Invalid email or password",
-        { type: "error" }
-      );
+      notify(typeof e === "string" ? e : "Invalid email or password", {
+        type: "error",
+      });
       setLoading(false);
     }
   };
@@ -78,10 +77,12 @@ export default function MyLoginPage() {
           elevation={6}
           sx={{
             borderRadius: 3,
-            pt: 10, 
+            pt: 10,
             px: 3,
             pb: 3,
-            backdropFilter: "saturate(1.1)",
+            backgroundColor: "rgba(0, 0, 0, 0.6)", 
+            color: "#fff",
+            backdropFilter: "blur(10px)",
           }}
         >
           <form onSubmit={onSubmit}>

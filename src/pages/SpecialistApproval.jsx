@@ -38,7 +38,11 @@ const PendingSpecialists = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterGender, setFilterGender] = useState("");
   const [filterSpecialization, setFilterSpecialization] = useState("");
-  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
 
   useEffect(() => {
     fetchPendingSpecialists();
@@ -57,7 +61,8 @@ const PendingSpecialists = () => {
   };
 
   const handleApprove = async (id) => {
-    if (!window.confirm("Are you sure you want to APPROVE this specialist?")) return;
+    if (!window.confirm("Are you sure you want to APPROVE this specialist?"))
+      return;
 
     try {
       const token = localStorage.getItem("authToken");
@@ -66,16 +71,25 @@ const PendingSpecialists = () => {
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setSnackbar({ open: true, message: "Specialist approved!", severity: "success" });
+      setSnackbar({
+        open: true,
+        message: "Specialist approved!",
+        severity: "success",
+      });
       fetchPendingSpecialists();
       handleCloseMenu();
     } catch {
-      setSnackbar({ open: true, message: "Failed to approve specialist", severity: "error" });
+      setSnackbar({
+        open: true,
+        message: "Failed to approve specialist",
+        severity: "error",
+      });
     }
   };
 
   const handleReject = async (id) => {
-    if (!window.confirm("Are you sure you want to REJECT this specialist?")) return;
+    if (!window.confirm("Are you sure you want to REJECT this specialist?"))
+      return;
 
     try {
       const token = localStorage.getItem("authToken");
@@ -84,11 +98,19 @@ const PendingSpecialists = () => {
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setSnackbar({ open: true, message: "Specialist rejected.", severity: "info" });
+      setSnackbar({
+        open: true,
+        message: "Specialist rejected.",
+        severity: "info",
+      });
       fetchPendingSpecialists();
       handleCloseMenu();
     } catch {
-      setSnackbar({ open: true, message: "Failed to reject specialist", severity: "error" });
+      setSnackbar({
+        open: true,
+        message: "Failed to reject specialist",
+        severity: "error",
+      });
     }
   };
 
@@ -295,69 +317,108 @@ const PendingSpecialists = () => {
         maxWidth="sm"
       >
         {selectedUser && (
-          <DialogContent sx={{ p: 0, borderRadius: 2, overflow: "hidden" }}>
+          <DialogContent
+            sx={{
+              p: 0,
+              borderRadius: 2,
+              overflow: "hidden",
+              maxHeight: "90vh", // Add this
+            }}
+          >
             <Box
               sx={{
-                background: "#002B5B",
-                color: "#fff",
-                py: 4,
-                textAlign: "center",
+                overflowY: "auto",
+                maxHeight: "90vh",
               }}
             >
-              <Avatar
-                src={selectedUser.profileImage || "/placeholder.png"}
+              {/* Header */}
+              <Box
                 sx={{
-                  width: 100,
-                  height: 100,
-                  mx: "auto",
-                  mb: 2,
-                  border: "3px solid white",
+                  background: "#002B5B",
+                  color: "#fff",
+                  py: 4,
+                  textAlign: "center",
                 }}
-              />
-              <Typography variant="h5" fontWeight="bold">
-                {selectedUser.firstName} {selectedUser.lastName}
-              </Typography>
-              <Typography variant="subtitle1" sx={{ opacity: 0.8 }}>
-                {selectedUser.specialization}
-              </Typography>
-            </Box>
+              >
+                <Avatar
+                  src={selectedUser.profileImage || "/placeholder.png"}
+                  sx={{
+                    width: 100,
+                    height: 100,
+                    mx: "auto",
+                    mb: 2,
+                    border: "3px solid white",
+                  }}
+                />
+                <Typography variant="h5" fontWeight="bold">
+                  {selectedUser.firstName} {selectedUser.lastName}
+                </Typography>
+                <Typography variant="subtitle1" sx={{ opacity: 0.8 }}>
+                  {selectedUser.specialization}
+                </Typography>
+              </Box>
 
-            <Box sx={{ p: 3 }}>
-              {[
-                {
-                  icon: <PhoneIcon color="primary" />,
-                  label: selectedUser.phoneNumber,
-                },
-                {
-                  icon: <EmailIcon color="primary" />,
-                  label: selectedUser.email,
-                },
-                {
-                  icon: <BadgeIcon color="primary" />,
-                  label: `License #: ${selectedUser.licenseNumber}`,
-                },
-                {
-                  icon: <LocalHospitalIcon color="primary" />,
-                  label: `Clinic: ${selectedUser.clinic}`,
-                },
-                {
-                  icon: <BusinessIcon color="primary" />,
-                  label: `Specialization: ${selectedUser.specialization}`,
-                },
-                {
-                  icon: <LocationOnIcon color="primary" />,
-                  label: `Location: ${selectedUser.location}`,
-                },
-                {
-                  icon: <WcIcon color="primary" />,
-                  label: `Gender: ${selectedUser.gender}`,
-                },
-              ].map((item, index) => (
-                <Box key={index} display="flex" alignItems="center" mb={1.5}>
-                  <Box mr={2}>{item.icon}</Box>
-                  <Typography variant="body1">{item.label}</Typography>
-                </Box>
-              ))}
+              {/* Body */}
+              <Box sx={{ p: 3 }}>
+                {[
+                  {
+                    icon: <PhoneIcon color="primary" />,
+                    label: selectedUser.phoneNumber,
+                  },
+                  {
+                    icon: <EmailIcon color="primary" />,
+                    label: selectedUser.email,
+                  },
+                  {
+                    icon: <LocalHospitalIcon color="primary" />,
+                    label: `Clinic: ${selectedUser.clinic}`,
+                  },
+                  {
+                    icon: <BusinessIcon color="primary" />,
+                    label: `Specialization: ${selectedUser.specialization}`,
+                  },
+                  {
+                    icon: <LocationOnIcon color="primary" />,
+                    label: `Location: ${selectedUser.location}`,
+                  },
+                  {
+                    icon: <WcIcon color="primary" />,
+                    label: `Gender: ${selectedUser.gender}`,
+                  },
+                ].map((item, index) => (
+                  <Box key={index} display="flex" alignItems="center" mb={1.5}>
+                    <Box mr={2}>{item.icon}</Box>
+                    <Typography variant="body1">{item.label}</Typography>
+                  </Box>
+                ))}
+
+                {/* License Image */}
+                {selectedUser.licenseNumber && (
+                  <Box mt={4}>
+                    <Typography
+                      variant="subtitle1"
+                      fontWeight="bold"
+                      gutterBottom
+                      sx={{ display: "flex", alignItems: "center" }}
+                    >
+                      <BadgeIcon color="primary" sx={{ mr: 1 }} />
+                      License Image
+                    </Typography>
+                    <Box
+                      component="img"
+                      src={selectedUser.licenseNumber}
+                      alt="License"
+                      sx={{
+                        width: "100%",
+                        height: "auto",
+                        borderRadius: 2,
+                        border: "1px solid #ccc",
+                        objectFit: "cover",
+                      }}
+                    />
+                  </Box>
+                )}
+              </Box>
             </Box>
           </DialogContent>
         )}
