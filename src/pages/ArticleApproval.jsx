@@ -177,8 +177,16 @@ const PendingArticles = () => {
   });
 
   return (
-    <Box p={3}>
-      <Typography variant="h4" fontWeight="bold" mb={3}>
+    <Box
+      p={3}
+      sx={{
+        height: "100vh",
+        overflowY: "auto",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      <Typography variant="h4" fontWeight="bold" mb={3} sx={{ color: "white" }}>
         Pending Articles
       </Typography>
 
@@ -187,13 +195,15 @@ const PendingArticles = () => {
         sx={{
           p: 2,
           mb: 3,
-          borderRadius: 2,
-          boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+          borderRadius: 4,
+          backdropFilter: "blur(12px)",
+          backgroundColor: "rgba(30, 41, 59, 0.6)",
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
           flexWrap: "wrap",
           gap: 2,
+          boxShadow: "0 4px 20px rgba(0,0,0,0.3)",
         }}
       >
         {/* Search */}
@@ -205,7 +215,8 @@ const PendingArticles = () => {
             minWidth: 250,
             borderRadius: "50px",
             px: 2,
-            border: "1px solid #ccc",
+            backgroundColor: "rgba(255,255,255,0.1)",
+            border: "1px solid rgba(255,255,255,0.2)",
           }}
         >
           <input
@@ -220,6 +231,8 @@ const PendingArticles = () => {
               padding: "10px",
               width: "100%",
               fontSize: "16px",
+              color: "white",
+              caretColor: "white",
             }}
           />
         </Box>
@@ -232,13 +245,31 @@ const PendingArticles = () => {
             style={{
               padding: "10px 16px",
               borderRadius: "50px",
-              border: "1px solid #ccc",
+              border: "1px solid rgba(255,255,255,0.2)",
+              backgroundColor: "rgba(255,255,255,0.05)",
+              color: "white",
               fontSize: "16px",
+              appearance: "none", // keeps custom styling
             }}
           >
-            <option value="">All Genders</option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
+            <option
+              style={{ backgroundColor: "#1e1e1e", color: "white" }}
+              value=""
+            >
+              All Genders
+            </option>
+            <option
+              style={{ backgroundColor: "#1e1e1e", color: "white" }}
+              value="male"
+            >
+              Male
+            </option>
+            <option
+              style={{ backgroundColor: "#1e1e1e", color: "white" }}
+              value="female"
+            >
+              Female
+            </option>
           </select>
         </Box>
 
@@ -250,22 +281,65 @@ const PendingArticles = () => {
             style={{
               padding: "10px 16px",
               borderRadius: "50px",
-              border: "1px solid #ccc",
+              border: "1px solid rgba(255,255,255,0.2)",
+              backgroundColor: "rgba(255,255,255,0.05)",
+              color: "white",
               fontSize: "16px",
             }}
           >
-            <option value="">All Categories</option>
-            <option value="health">Health</option>
-            <option value="social">Social</option>
-            <option value="relationships">Relationships</option>
-            <option value="growth">Growth</option>
-            <option value="coping strategies">Coping Strategies</option>
-            <option value="mental wellness">Mental Wellness</option>
-            <option value="self-care">Self-care</option>
+            <option
+              style={{ backgroundColor: "#1e1e1e", color: "white" }}
+              value=""
+            >
+              All Categories
+            </option>
+            <option
+              style={{ backgroundColor: "#1e1e1e", color: "white" }}
+              value="health"
+            >
+              Health
+            </option>
+            <option
+              style={{ backgroundColor: "#1e1e1e", color: "white" }}
+              value="social"
+            >
+              Social
+            </option>
+            <option
+              style={{ backgroundColor: "#1e1e1e", color: "white" }}
+              value="relationships"
+            >
+              Relationships
+            </option>
+            <option
+              style={{ backgroundColor: "#1e1e1e", color: "white" }}
+              value="growth"
+            >
+              Growth
+            </option>
+            <option
+              style={{ backgroundColor: "#1e1e1e", color: "white" }}
+              value="coping strategies"
+            >
+              Coping Strategies
+            </option>
+            <option
+              style={{ backgroundColor: "#1e1e1e", color: "white" }}
+              value="mental wellness"
+            >
+              Mental Wellness
+            </option>
+            <option
+              style={{ backgroundColor: "#1e1e1e", color: "white" }}
+              value="self-care"
+            >
+              Self-care
+            </option>
           </select>
         </Box>
       </Box>
 
+      {/* Grid of Cards */}
       <Box
         sx={{
           display: "grid",
@@ -275,19 +349,26 @@ const PendingArticles = () => {
             md: "1fr 1fr 1fr",
           },
           gap: 3,
+          pb: 4,
         }}
       >
         {filteredArticles.map((article) => (
           <Box
             key={article._id}
             sx={{
-              borderRadius: 2,
-              boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+              borderRadius: 3,
+              backdropFilter: "blur(10px)",
+              backgroundColor: "rgba(30, 41, 59, 0.7)",
+              boxShadow: "0 4px 16px rgba(0,0,0,0.4)",
               overflow: "hidden",
               display: "flex",
               flexDirection: "column",
               cursor: "pointer",
-              bgcolor: "#fff",
+              transition: "transform 0.2s ease, box-shadow 0.2s ease",
+              "&:hover": {
+                transform: "translateY(-4px)",
+                boxShadow: "0 6px 20px rgba(0,0,0,0.6)",
+              },
             }}
             onClick={() => handleView(article)}
           >
@@ -303,17 +384,15 @@ const PendingArticles = () => {
                 position: "relative",
               }}
             >
-              {/* Overlay gradient for readability */}
               <Box
                 sx={{
                   position: "absolute",
                   inset: 0,
                   background:
-                    "linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.6) 100%)",
+                    "linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.7) 100%)",
                 }}
               />
-
-              {/* Specialist Avatar and Name */}
+              {/* Specialist Info */}
               <Box
                 sx={{
                   position: "absolute",
@@ -348,6 +427,7 @@ const PendingArticles = () => {
                 flexGrow: 1,
                 display: "flex",
                 flexDirection: "column",
+                color: "white",
               }}
             >
               <Typography
@@ -359,11 +439,11 @@ const PendingArticles = () => {
                 {article.title}
               </Typography>
 
-              {/* Categories (3 columns grid) */}
+              {/* Categories */}
               <Box
                 sx={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(3, 1fr)",
+                  display: "flex",
+                  flexWrap: "wrap",
                   gap: 1,
                   mb: 2,
                 }}
@@ -372,21 +452,24 @@ const PendingArticles = () => {
                   <Chip
                     key={category}
                     label={category}
-                    color="primary"
                     size="small"
-                    sx={{ textTransform: "capitalize" }}
+                    sx={{
+                      backgroundColor: "rgba(255,255,255,0.1)",
+                      color: "white",
+                      textTransform: "capitalize",
+                    }}
                   />
                 ))}
               </Box>
 
-              {/* Metadata with icons */}
+              {/* Metadata + Menu */}
               <Box
                 sx={{
                   display: "flex",
                   gap: 2,
                   alignItems: "center",
-                  color: "text.secondary",
                   mt: "auto",
+                  color: "rgba(255,255,255,0.7)",
                 }}
               >
                 <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
@@ -402,7 +485,7 @@ const PendingArticles = () => {
                   </Typography>
                 </Box>
 
-                {/* Action Menu Button */}
+                {/* Action Menu */}
                 <Box sx={{ marginLeft: "auto" }}>
                   <IconButton
                     onClick={(e) => {
@@ -410,6 +493,7 @@ const PendingArticles = () => {
                       handleMenuClick(e, article._id);
                     }}
                     size="small"
+                    sx={{ color: "white" }}
                   >
                     <MoreVertIcon />
                   </IconButton>
@@ -418,6 +502,14 @@ const PendingArticles = () => {
                       anchorEl={anchorEl}
                       open={Boolean(anchorEl)}
                       onClose={handleCloseMenu}
+                      onClick={(e) => e.stopPropagation()}
+                      PaperProps={{
+                        sx: {
+                          backgroundColor: "rgba(30, 41, 59, 0.95)",
+                          color: "white",
+                          borderRadius: 2,
+                        },
+                      }}
                     >
                       <MenuItem onClick={() => handleView(article)}>
                         <VisibilityIcon fontSize="small" sx={{ mr: 1 }} />
@@ -426,7 +518,10 @@ const PendingArticles = () => {
                       <MenuItem onClick={() => handleApprove(article._id)}>
                         Approve
                       </MenuItem>
-                      <MenuItem onClick={() => openRejectDialog(article._id)}>
+                      <MenuItem
+                        onClick={() => openRejectDialog(article._id)}
+                        sx={{ color: "#f87171" }}
+                      >
                         Reject
                       </MenuItem>
                     </Menu>

@@ -15,6 +15,7 @@ import {
   Snackbar,
   Alert,
 } from "@mui/material";
+import { GoogleMap, Marker, useLoadScript } from "@react-google-maps/api";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import DeleteIcon from "@mui/icons-material/Delete";
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -100,9 +101,67 @@ const SpecialistManagement = () => {
     return matchesSearch && matchesGender && matchesSpecialization;
   });
 
+  const mapContainerStyle = {
+    width: "100%",
+    height: "300px",
+    marginBottom: "24px",
+  };
+
+  const ClinicMap = ({ clinic }) => {
+    const [lat, lng] = clinic.split(",").map(Number);
+
+    const { isLoaded, loadError } = useLoadScript({
+      googleMapsApiKey: "AIzaSyDpSz9OQRpg90DMG9PDDHCxDpwaxOomkio",
+    });
+
+    if (loadError) return <div>Error loading maps</div>;
+    if (!isLoaded) return <div>Loading Maps...</div>;
+
+    return (
+      <GoogleMap
+        mapContainerStyle={mapContainerStyle}
+        zoom={14}
+        center={{ lat, lng }}
+      >
+        <Marker position={{ lat, lng }} />
+      </GoogleMap>
+    );
+  };
+
+  const ClinicAddress = ({ clinic }) => {
+    const [address, setAddress] = useState("Loading address...");
+
+    useEffect(() => {
+      if (!clinic) return;
+
+      const [lat, lng] = clinic.split(",").map(Number);
+
+      const fetchAddress = async () => {
+        try {
+          const res = await axios.get(
+            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=AIzaSyDpSz9OQRpg90DMG9PDDHCxDpwaxOomkio`
+          );
+
+          if (res.data.status === "OK" && res.data.results.length > 0) {
+            setAddress(res.data.results[0].formatted_address);
+          } else {
+            setAddress(`Clinic: ${lat.toFixed(5)}, ${lng.toFixed(5)}`);
+          }
+        } catch (err) {
+          console.error("Reverse geocode failed:", err);
+          setAddress(`Clinic: ${lat.toFixed(5)}, ${lng.toFixed(5)}`);
+        }
+      };
+
+      fetchAddress();
+    }, [clinic]);
+
+    return <div>{address}</div>;
+  };
+
   return (
     <Box p={3}>
-      <Typography variant="h4" fontWeight="bold" mb={3}>
+      <Typography variant="h4" fontWeight="bold" mb={3} sx={{ color: "white" }}>
         Specialists Management
       </Typography>
 
@@ -111,13 +170,15 @@ const SpecialistManagement = () => {
         sx={{
           p: 2,
           mb: 3,
-          borderRadius: 2,
-          boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+          borderRadius: 4,
+          backdropFilter: "blur(12px)",
+          backgroundColor: "rgba(30, 41, 59, 0.6)",
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
           flexWrap: "wrap",
           gap: 2,
+          boxShadow: "0 4px 20px rgba(0,0,0,0.4)",
         }}
       >
         {/* Search */}
@@ -129,6 +190,7 @@ const SpecialistManagement = () => {
             minWidth: 250,
             borderRadius: "50px",
             px: 2,
+            backgroundColor: "rgba(255,255,255,0.1)",
           }}
         >
           <input
@@ -143,6 +205,8 @@ const SpecialistManagement = () => {
               padding: "10px",
               width: "100%",
               fontSize: "16px",
+              color: "white",
+              caretColor: "white",
             }}
           />
         </Box>
@@ -155,15 +219,33 @@ const SpecialistManagement = () => {
             style={{
               padding: "10px 16px",
               borderRadius: "50px",
-              border: "1px solid #ccc",
+              border: "1px solid rgba(255,255,255,0.2)",
+              backgroundColor: "rgba(255,255,255,0.05)",
+              color: "white",
               fontSize: "16px",
             }}
           >
-            <option value="">All Genders</option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
+            <option
+              style={{ backgroundColor: "#1e1e1e", color: "white" }}
+              value=""
+            >
+              All Genders
+            </option>
+            <option
+              style={{ backgroundColor: "#1e1e1e", color: "white" }}
+              value="male"
+            >
+              Male
+            </option>
+            <option
+              style={{ backgroundColor: "#1e1e1e", color: "white" }}
+              value="female"
+            >
+              Female
+            </option>
           </select>
         </Box>
+
         {/* Specialization Filter */}
         <Box>
           <select
@@ -172,14 +254,36 @@ const SpecialistManagement = () => {
             style={{
               padding: "10px 16px",
               borderRadius: "50px",
-              border: "1px solid #ccc",
+              border: "1px solid rgba(255,255,255,0.2)",
+              backgroundColor: "rgba(255,255,255,0.05)",
+              color: "white",
               fontSize: "16px",
             }}
           >
-            <option value="">All Specialization</option>
-            <option value="Psychologist">Psychologist</option>
-            <option value="Counselor">Counselor</option>
-            <option value="Psychiatrist">Psychiatrist</option>
+            <option
+              style={{ backgroundColor: "#1e1e1e", color: "white" }}
+              value=""
+            >
+              All Specialization
+            </option>
+            <option
+              style={{ backgroundColor: "#1e1e1e", color: "white" }}
+              value="Psychologist"
+            >
+              Psychologist
+            </option>
+            <option
+              style={{ backgroundColor: "#1e1e1e", color: "white" }}
+              value="Counselor"
+            >
+              Counselor
+            </option>
+            <option
+              style={{ backgroundColor: "#1e1e1e", color: "white" }}
+              value="Psychiatrist"
+            >
+              Psychiatrist
+            </option>
           </select>
         </Box>
       </Box>
@@ -188,56 +292,78 @@ const SpecialistManagement = () => {
       <Box
         sx={{
           p: 2,
-          borderRadius: 2,
-          boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+          borderRadius: 4,
+          backdropFilter: "blur(12px)",
+          backgroundColor: "rgba(30, 41, 59, 0.6)",
+          boxShadow: "0 4px 20px rgba(0,0,0,0.4)",
           overflowX: "auto",
         }}
       >
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Profile</TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Specialization</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Actions</TableCell>
+              {[
+                "Profile",
+                "Name",
+                "Email",
+                "Specialization",
+                "Status",
+                "Actions",
+              ].map((head) => (
+                <TableCell
+                  key={head}
+                  sx={{ color: "white", fontWeight: "bold" }}
+                >
+                  {head}
+                </TableCell>
+              ))}
             </TableRow>
           </TableHead>
+
           <TableBody>
             {filteredSpecialists.map((spec) => (
-              <TableRow key={spec._id}>
+              <TableRow
+                key={spec._id}
+                sx={{
+                  "&:hover": { backgroundColor: "rgba(255,255,255,0.05)" },
+                }}
+              >
                 <TableCell>
                   <Avatar
                     src={spec.profileImage || "/placeholder.png"}
                     sx={{ width: 48, height: 48 }}
                   />
                 </TableCell>
-                <TableCell>
+                <TableCell sx={{ color: "white" }}>
                   {spec.firstName} {spec.lastName}
                 </TableCell>
-                <TableCell>{spec.email}</TableCell>
-                <TableCell>{spec.specialization}</TableCell>
+                <TableCell sx={{ color: "rgba(255,255,255,0.7)" }}>
+                  {spec.email}
+                </TableCell>
+                <TableCell sx={{ color: "rgba(255,255,255,0.7)" }}>
+                  {spec.specialization}
+                </TableCell>
                 <TableCell>
                   <Box
                     sx={{
                       backgroundColor:
                         spec.availability === "Online"
-                          ? "#d4edda"
+                          ? "rgba(72,187,120,0.2)"
                           : spec.availability === "Offline"
-                          ? "#f0f0f0"
-                          : "#ffeeba",
+                          ? "rgba(255,255,255,0.1)"
+                          : "rgba(255,193,7,0.2)",
                       color:
                         spec.availability === "Online"
-                          ? "#28a745"
+                          ? "#48BB78"
                           : spec.availability === "Offline"
-                          ? "#6c757d"
-                          : "#856404",
+                          ? "#A0AEC0"
+                          : "#FFC107",
                       borderRadius: "20px",
                       px: 2,
                       py: 0.5,
                       fontSize: "14px",
                       display: "inline-block",
+                      fontWeight: "bold",
                     }}
                   >
                     {spec.availability}
@@ -245,20 +371,30 @@ const SpecialistManagement = () => {
                 </TableCell>
                 <TableCell>
                   <IconButton onClick={(e) => handleMenuClick(e, spec._id)}>
-                    <MoreVertIcon />
+                    <MoreVertIcon sx={{ color: "white" }} />
                   </IconButton>
                   {menuId === spec._id && (
                     <Menu
                       anchorEl={anchorEl}
                       open={Boolean(anchorEl)}
                       onClose={handleCloseMenu}
+                      PaperProps={{
+                        sx: {
+                          backgroundColor: "rgba(30, 41, 59, 0.9)",
+                          color: "white",
+                          borderRadius: 2,
+                        },
+                      }}
                     >
                       <MenuItem onClick={() => handleView(spec)}>
                         <VisibilityIcon fontSize="small" sx={{ mr: 1 }} />
                         View Profile
                       </MenuItem>
                       <MenuItem onClick={() => handleDelete(spec._id)}>
-                        <DeleteIcon fontSize="small" sx={{ mr: 1 }} />
+                        <DeleteIcon
+                          fontSize="small"
+                          sx={{ mr: 1, color: "#f87171" }}
+                        />
                         Delete
                       </MenuItem>
                     </Menu>
@@ -331,21 +467,22 @@ const SpecialistManagement = () => {
                     icon: <EmailIcon color="primary" />,
                     label: selectedUser.email,
                   },
-                  {
-                    icon: <LocalHospitalIcon color="primary" />,
-                    label: `Clinic: ${selectedUser.clinic}`,
-                  },
+
                   {
                     icon: <BusinessIcon color="primary" />,
                     label: `Specialization: ${selectedUser.specialization}`,
+                  },
+                  {
+                    icon: <WcIcon color="primary" />,
+                    label: `Gender: ${selectedUser.gender}`,
                   },
                   {
                     icon: <LocationOnIcon color="primary" />,
                     label: `Location: ${selectedUser.location}`,
                   },
                   {
-                    icon: <WcIcon color="primary" />,
-                    label: `Gender: ${selectedUser.gender}`,
+                    icon: <LocalHospitalIcon color="primary" />,
+                    label: `Clinic: ${selectedUser.clinic}`,
                   },
                 ].map((item, index) => (
                   <Box key={index} display="flex" alignItems="center" mb={1.5}>
@@ -353,7 +490,17 @@ const SpecialistManagement = () => {
                     <Typography variant="body1">{item.label}</Typography>
                   </Box>
                 ))}
-
+                {/* Clinic Map */}
+                {selectedUser.clinic && (
+                  <>
+                    <Box display="flex" alignItems="center" mb={1.5}>
+                      <Typography variant="body1" fontWeight="bold">
+                        Clinic Map Preview
+                      </Typography>
+                    </Box>
+                    <ClinicMap clinic={selectedUser.clinic} />
+                  </>
+                )}
                 {/* License Image Section */}
                 {selectedUser.licenseNumber && (
                   <Box mt={4}>

@@ -6,11 +6,12 @@ const CustomAppBar = (props) => {
     <AppBar
       {...props}
       sx={{
-        backgroundColor: "rgba(30, 41, 59, 0.85)", // semi-transparent navy
-        color: "#FFFFFF",
-        boxShadow: "none",
-        backdropFilter: "blur(10px)", // adds a smooth glass effect
-        borderBottom: "1px solid rgba(255, 255, 255, 0.1)", // subtle border
+        backgroundColor: "rgba(30, 41, 59, 0.6)", 
+        color: "#FFF",
+        backdropFilter: "blur(2px)", 
+        boxShadow: "0 2px 10px rgba(255,255,255,0.1)", 
+        borderBottom: "1px solid rgba(255,255,255,0.1)",
+        px: 2,
       }}
     >
       <Box
@@ -19,8 +20,6 @@ const CustomAppBar = (props) => {
           alignItems: "center",
           justifyContent: "space-between",
           width: "100%",
-          px: 2,
-          py: 1,
         }}
       >
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
@@ -29,7 +28,7 @@ const CustomAppBar = (props) => {
             alt="Calmora Logo"
             style={{ width: 32, height: 32, borderRadius: "50%" }}
           />
-          <Typography variant="h6" fontWeight="bold">
+          <Typography variant="h6" fontWeight="600">
             Calmora Admin Dashboard
           </Typography>
         </Box>
