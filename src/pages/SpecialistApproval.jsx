@@ -15,6 +15,7 @@ import {
   Snackbar,
   Alert,
 } from "@mui/material";
+import { GoogleMap, Marker, useLoadScript } from "@react-google-maps/api";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import axios from "axios";
@@ -146,10 +147,37 @@ const PendingSpecialists = () => {
     return matchesSearch && matchesGender && matchesSpecialization;
   });
 
+  const mapContainerStyle = {
+    width: "100%",
+    height: "300px",
+    marginBottom: "24px",
+  };
+
+  const ClinicMap = ({ clinic }) => {
+    const [lat, lng] = clinic.split(",").map(Number);
+
+    const { isLoaded, loadError } = useLoadScript({
+      googleMapsApiKey: "AIzaSyDpSz9OQRpg90DMG9PDDHCxDpwaxOomkio",
+    });
+
+    if (loadError) return <div>Error loading maps</div>;
+    if (!isLoaded) return <div>Loading Maps...</div>;
+
+    return (
+      <GoogleMap
+        mapContainerStyle={mapContainerStyle}
+        zoom={14}
+        center={{ lat, lng }}
+      >
+        <Marker position={{ lat, lng }} />
+      </GoogleMap>
+    );
+  };
+
   return (
-    <Box p={3}>
+    <Box className="p-6">
       <Typography variant="h4" fontWeight="bold" mb={3}>
-        Pending Specialists
+        Pending Specialist
       </Typography>
 
       {/* Search and Filter Bar */}
@@ -157,13 +185,15 @@ const PendingSpecialists = () => {
         sx={{
           p: 2,
           mb: 3,
-          borderRadius: 2,
-          boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+          borderRadius: 4,
+          backdropFilter: "blur(12px)",
+          backgroundColor: "rgba(30, 41, 59, 0.6)",
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
           flexWrap: "wrap",
           gap: 2,
+          boxShadow: "0 4px 20px rgba(0,0,0,0.4)",
         }}
       >
         {/* Search */}
@@ -175,6 +205,7 @@ const PendingSpecialists = () => {
             minWidth: 250,
             borderRadius: "50px",
             px: 2,
+            backgroundColor: "rgba(255,255,255,0.1)",
           }}
         >
           <input
@@ -189,6 +220,8 @@ const PendingSpecialists = () => {
               padding: "10px",
               width: "100%",
               fontSize: "16px",
+              color: "white",
+              caretColor: "white",
             }}
           />
         </Box>
@@ -201,13 +234,30 @@ const PendingSpecialists = () => {
             style={{
               padding: "10px 16px",
               borderRadius: "50px",
-              border: "1px solid #ccc",
+              border: "1px solid rgba(255,255,255,0.2)",
+              backgroundColor: "rgba(255,255,255,0.05)",
+              color: "white",
               fontSize: "16px",
             }}
           >
-            <option value="">All Genders</option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
+            <option
+              style={{ backgroundColor: "#1e1e1e", color: "white" }}
+              value=""
+            >
+              All Genders
+            </option>
+            <option
+              style={{ backgroundColor: "#1e1e1e", color: "white" }}
+              value="male"
+            >
+              Male
+            </option>
+            <option
+              style={{ backgroundColor: "#1e1e1e", color: "white" }}
+              value="female"
+            >
+              Female
+            </option>
           </select>
         </Box>
 
@@ -219,85 +269,143 @@ const PendingSpecialists = () => {
             style={{
               padding: "10px 16px",
               borderRadius: "50px",
-              border: "1px solid #ccc",
+              border: "1px solid rgba(255,255,255,0.2)",
+              backgroundColor: "rgba(255,255,255,0.05)",
+              color: "white",
               fontSize: "16px",
             }}
           >
-            <option value="">All Specializations</option>
-            <option value="Psychologist">Psychologist</option>
-            <option value="Counselor">Counselor</option>
-            <option value="Psychiatrist">Psychiatrist</option>
+            <option
+              style={{ backgroundColor: "#1e1e1e", color: "white" }}
+              value=""
+            >
+              All Specialization
+            </option>
+            <option
+              style={{ backgroundColor: "#1e1e1e", color: "white" }}
+              value="Psychologist"
+            >
+              Psychologist
+            </option>
+            <option
+              style={{ backgroundColor: "#1e1e1e", color: "white" }}
+              value="Counselor"
+            >
+              Counselor
+            </option>
+            <option
+              style={{ backgroundColor: "#1e1e1e", color: "white" }}
+              value="Psychiatrist"
+            >
+              Psychiatrist
+            </option>
           </select>
         </Box>
       </Box>
 
       {/* Table */}
       <Box
-        sx={{
-          p: 2,
-          borderRadius: 2,
-          boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
-          overflowX: "auto",
-        }}
+        className="
+  p-4 
+  rounded-2xl 
+  backdrop-blur-md 
+  bg-[rgba(30,41,59,0.6)] 
+  shadow-[0_4px_20px_rgba(0,0,0,0.4)] 
+  overflow-x-auto
+"
       >
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Profile</TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Specialization</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Actions</TableCell>
+              {[
+                "Profile",
+                "Name",
+                "Email",
+                "Specialization",
+                "Status",
+                "Actions",
+              ].map((head) => (
+                <TableCell key={head} sx={{ color: "white", fontWeight: "bold" }} className="text-white font-semibold">
+                  {head}
+                </TableCell>
+              ))}
             </TableRow>
           </TableHead>
+
           <TableBody>
             {filteredSpecialists.map((spec) => (
-              <TableRow key={spec._id}>
+              <TableRow
+                key={spec._id}
+                className="hover:bg-[rgba(255,255,255,0.05)]"
+              >
+                {/* Profile */}
                 <TableCell>
                   <Avatar
                     src={spec.profileImage || "/placeholder.png"}
                     sx={{ width: 48, height: 48 }}
                   />
                 </TableCell>
-                <TableCell>
+
+                {/* Name */}
+                <TableCell className="text-white">
                   {spec.firstName} {spec.lastName}
                 </TableCell>
-                <TableCell>{spec.email}</TableCell>
-                <TableCell>{spec.specialization}</TableCell>
+
+                {/* Email */}
+                <TableCell className="text-gray-300">{spec.email}</TableCell>
+
+                {/* Specialization */}
+                <TableCell className="text-gray-300">
+                  {spec.specialization}
+                </TableCell>
+
+                {/* Status */}
                 <TableCell>
-                  <Box
-                    sx={{
-                      backgroundColor: "#ffeeba",
-                      color: "#856404",
-                      borderRadius: "20px",
-                      px: 2,
-                      py: 0.5,
-                      fontSize: "14px",
-                      display: "inline-block",
-                    }}
+                  <span
+                    className={`
+                px-3 py-1 rounded-full text-sm font-semibold
+                ${
+                  spec.approvalStatus === "Approved"
+                    ? "bg-green-200 text-green-800"
+                    : spec.approvalStatus === "Rejected"
+                    ? "bg-red-200 text-red-800"
+                    : "bg-yellow-200 text-gray-800"
+                }
+              `}
                   >
                     {spec.approvalStatus || "Pending"}
-                  </Box>
+                  </span>
                 </TableCell>
+
+                {/* Actions */}
                 <TableCell>
                   <IconButton onClick={(e) => handleMenuClick(e, spec._id)}>
-                    <MoreVertIcon />
+                    <MoreVertIcon className="text-white" />
                   </IconButton>
                   {menuId === spec._id && (
                     <Menu
                       anchorEl={anchorEl}
                       open={Boolean(anchorEl)}
                       onClose={handleCloseMenu}
+                      PaperProps={{
+                        className:
+                          "bg-[rgba(30,41,59,0.9)] text-white rounded-xl shadow-xl",
+                      }}
                     >
                       <MenuItem onClick={() => handleView(spec)}>
-                        <VisibilityIcon fontSize="small" sx={{ mr: 1 }} />
+                        <VisibilityIcon fontSize="small" className="mr-2" />
                         View Profile
                       </MenuItem>
-                      <MenuItem onClick={() => handleApprove(spec._id)}>
+                      <MenuItem
+                        onClick={() => handleApprove(spec._id)}
+                        className="text-green-400"
+                      >
                         Approve
                       </MenuItem>
-                      <MenuItem onClick={() => handleReject(spec._id)}>
+                      <MenuItem
+                        onClick={() => handleReject(spec._id)}
+                        className="text-red-400"
+                      >
                         Reject
                       </MenuItem>
                     </Menu>
@@ -322,7 +430,7 @@ const PendingSpecialists = () => {
               p: 0,
               borderRadius: 2,
               overflow: "hidden",
-              maxHeight: "90vh", // Add this
+              maxHeight: "90vh",
             }}
           >
             <Box
@@ -370,20 +478,20 @@ const PendingSpecialists = () => {
                     label: selectedUser.email,
                   },
                   {
-                    icon: <LocalHospitalIcon color="primary" />,
-                    label: `Clinic: ${selectedUser.clinic}`,
-                  },
-                  {
                     icon: <BusinessIcon color="primary" />,
                     label: `Specialization: ${selectedUser.specialization}`,
+                  },
+                  {
+                    icon: <WcIcon color="primary" />,
+                    label: `Gender: ${selectedUser.gender}`,
                   },
                   {
                     icon: <LocationOnIcon color="primary" />,
                     label: `Location: ${selectedUser.location}`,
                   },
                   {
-                    icon: <WcIcon color="primary" />,
-                    label: `Gender: ${selectedUser.gender}`,
+                    icon: <LocalHospitalIcon color="primary" />,
+                    label: `Clinic: ${selectedUser.clinic}`,
                   },
                 ].map((item, index) => (
                   <Box key={index} display="flex" alignItems="center" mb={1.5}>
@@ -391,7 +499,17 @@ const PendingSpecialists = () => {
                     <Typography variant="body1">{item.label}</Typography>
                   </Box>
                 ))}
-
+                {/* Clinic Map */}
+                {selectedUser.clinic && (
+                  <>
+                    <Box display="flex" alignItems="center" mb={1.5}>
+                      <Typography variant="body1" fontWeight="bold">
+                        Clinic Map Preview
+                      </Typography>
+                    </Box>
+                    <ClinicMap clinic={selectedUser.clinic} />
+                  </>
+                )}
                 {/* License Image */}
                 {selectedUser.licenseNumber && (
                   <Box mt={4}>

@@ -1,0 +1,22 @@
+import axios from "axios";
+
+export const reverseGeocode = async (lat, lng) => {
+  try {
+    const apiKey = "AIzaSyBkOkeLLzzjneBUpi8o36ujiaD-Yahu9O8";  
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${apiKey}`;
+
+    const response = await axios.get(url);
+
+    if (response.data.status === "OK") {
+      console.log("Google Maps API Key:", apiKey);
+      const results = response.data.results;
+      return results[0]?.formatted_address || "Unknown location";
+    } else {
+      console.error("Geocoding failed:", response.data.status);
+      return "Unknown location";
+    }
+  } catch (error) {
+    console.error("Error during reverse geocoding:", error);
+    return "Unknown location";
+  }
+};
