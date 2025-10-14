@@ -9,6 +9,9 @@ import {
   IconButton,
   Menu,
   MenuItem,
+  DialogTitle,      
+  DialogActions,   
+  TextField,  
   Dialog,
   DialogContent,
   Avatar,
@@ -32,6 +35,9 @@ const ArticleManagement = () => {
   const [menuId, setMenuId] = useState(null);
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [unpublishDialogOpen, setUnpublishDialogOpen] = useState(false);
+  const [unpublishReason, setUnpublishReason] = useState("");
+  const [articleToUnpublish, setArticleToUnpublish] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterGender, setFilterGender] = useState("");
@@ -71,27 +77,37 @@ const ArticleManagement = () => {
     handleCloseMenu();
   };
 
-  const handleUnpublish = async (articleId) => {
-    const confirm = window.confirm(
-      "Are you sure you want to unpublish this article?"
-    );
-    if (!confirm) return;
+  const handleOpenUnpublishDialog = (articleId) => {
+    setArticleToUnpublish(articleId);
+    setUnpublishReason("");
+    setUnpublishDialogOpen(true);
+    handleCloseMenu();
+  };
+
+  const handleUnpublishSubmit = async () => {
+    if (!unpublishReason.trim()) {
+      setSnackbarMessage("Please provide a reason");
+      setSnackbarOpen(true);
+      return;
+    }
 
     const token = localStorage.getItem("authToken");
+
     try {
       await axios.put(
-        `${API_URL}/auth/admin/articles/${articleId}/unpublish`,
-        {},
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        `${API_URL}/auth/admin/articles/${articleToUnpublish}/unpublish`,
+        { reason: unpublishReason },
+        { headers: { Authorization: `Bearer ${token}` } }
       );
+
       setSnackbarMessage("Article unpublished successfully");
       setSnackbarOpen(true);
+      setUnpublishDialogOpen(false);
       fetchArticles();
-      handleCloseMenu();
     } catch (error) {
       console.error("Failed to unpublish article:", error);
+      setSnackbarMessage("Failed to unpublish article");
+      setSnackbarOpen(true);
     }
   };
 
@@ -123,7 +139,7 @@ const ArticleManagement = () => {
         article.targetGender.toLowerCase() === filterGender.toLowerCase());
 
     const matchesCategory =
-      !filterCategory || 
+      !filterCategory ||
       (article.categories &&
         article.categories.some(
           (cat) => cat.toLowerCase() === filterCategory.toLowerCase()
@@ -137,7 +153,7 @@ const ArticleManagement = () => {
       p={3}
       sx={{
         height: "100vh",
-        overflowY: "auto", 
+        overflowY: "auto",
         display: "flex",
         flexDirection: "column",
       }}
@@ -480,8 +496,7 @@ const ArticleManagement = () => {
                       </MenuItem>
                       <MenuItem
                         onClick={() => {
-                          handleUnpublish(article._id);
-                          handleCloseMenu();
+                          handleOpenUnpublishDialog(article._id);
                         }}
                         sx={{ color: "#f87171" }}
                       >
@@ -657,6 +672,36 @@ const ArticleManagement = () => {
             </Box>
           </>
         )}
+      </Dialog>
+      <Dialog
+        open={unpublishDialogOpen}
+        onClose={() => setUnpublishDialogOpen(false)}
+      >
+        <DialogTitle>Unpublish Article</DialogTitle>
+        <DialogContent>
+          <Typography variant="body2" mb={1}>
+            Please provide a reason for unpublishing:
+          </Typography>
+          <TextField
+            autoFocus
+            fullWidth
+            multiline
+            rows={3}
+            variant="outlined"
+            value={unpublishReason}
+            onChange={(e) => setUnpublishReason(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setUnpublishDialogOpen(false)}>Cancel</Button>
+          <Button
+            color="error"
+            variant="contained"
+            onClick={handleUnpublishSubmit}
+          >
+            Unpublish
+          </Button>
+        </DialogActions>
       </Dialog>
 
       <Snackbar
