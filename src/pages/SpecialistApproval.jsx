@@ -36,6 +36,9 @@ const PendingSpecialists = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [menuId, setMenuId] = useState(null);
+  const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
+  const [rejectReason, setRejectReason] = useState("");
+  const [rejectingSpecialistId, setRejectingSpecialistId] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterGender, setFilterGender] = useState("");
   const [filterSpecialization, setFilterSpecialization] = useState("");
@@ -59,6 +62,13 @@ const PendingSpecialists = () => {
     } catch (error) {
       console.error("Failed to fetch pending specialists", error);
     }
+  };
+
+  const openRejectDialog = (specialistId) => {
+    setRejectReason("");
+    setRejectingSpecialistId(specialistId);
+    setRejectDialogOpen(true);
+    handleCloseMenu();
   };
 
   const handleApprove = async (id) => {
@@ -88,25 +98,34 @@ const PendingSpecialists = () => {
     }
   };
 
-  const handleReject = async (id) => {
-    if (!window.confirm("Are you sure you want to REJECT this specialist?"))
+  const handleRejectSubmit = async () => {
+    if (!rejectReason.trim()) {
+      setSnackbar({
+        open: true,
+        message: "Please provide a rejection reason",
+        severity: "warning",
+      });
       return;
+    }
 
     try {
       const token = localStorage.getItem("authToken");
       await axios.put(
-        `${API_URL}/auth/admin/specialists/${id}/reject`,
-        {},
+        `${API_URL}/auth/admin/specialists/${rejectingSpecialistId}/reject`,
+        { reason: rejectReason },
         { headers: { Authorization: `Bearer ${token}` } }
       );
+
       setSnackbar({
         open: true,
-        message: "Specialist rejected.",
+        message: "Specialist rejected with reason.",
         severity: "info",
       });
+
+      setRejectDialogOpen(false);
       fetchPendingSpecialists();
-      handleCloseMenu();
-    } catch {
+    } catch (error) {
+      console.error("Reject failed:", error);
       setSnackbar({
         open: true,
         message: "Failed to reject specialist",
@@ -325,7 +344,11 @@ const PendingSpecialists = () => {
                 "Status",
                 "Actions",
               ].map((head) => (
-                <TableCell key={head} sx={{ color: "white", fontWeight: "bold" }} className="text-white font-semibold">
+                <TableCell
+                  key={head}
+                  sx={{ color: "white", fontWeight: "bold" }}
+                  className="text-white font-semibold"
+                >
                   {head}
                 </TableCell>
               ))}
@@ -403,7 +426,7 @@ const PendingSpecialists = () => {
                         Approve
                       </MenuItem>
                       <MenuItem
-                        onClick={() => handleReject(spec._id)}
+                        onClick={() => openRejectDialog(spec._id)}
                         className="text-red-400"
                       >
                         Reject
@@ -540,6 +563,53 @@ const PendingSpecialists = () => {
             </Box>
           </DialogContent>
         )}
+      </Dialog>
+      <Dialog
+        open={rejectDialogOpen}
+        onClose={() => setRejectDialogOpen(false)}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogContent>
+          <Typography variant="h6" mb={2}>
+            Reject Specialist
+          </Typography>
+          <textarea
+            value={rejectReason}
+            onChange={(e) => setRejectReason(e.target.value)}
+            placeholder="Enter rejection reason..."
+            style={{
+              width: "100%",
+              minHeight: "100px",
+              padding: "10px",
+              fontSize: "16px",
+              borderRadius: "8px",
+              border: "1px solid #ccc",
+              resize: "vertical",
+            }}
+          />
+          <Box
+            sx={{ display: "flex", justifyContent: "flex-end", mt: 2, gap: 2 }}
+          >
+            <button
+              onClick={() => setRejectDialogOpen(false)}
+              style={{ padding: "8px 16px", borderRadius: "8px" }}
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleRejectSubmit}
+              style={{
+                padding: "8px 16px",
+                borderRadius: "8px",
+                backgroundColor: "#f87171",
+                color: "white",
+              }}
+            >
+              Reject
+            </button>
+          </Box>
+        </DialogContent>
       </Dialog>
 
       {/* Snackbar */}
