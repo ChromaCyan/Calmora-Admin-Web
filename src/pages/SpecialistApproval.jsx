@@ -14,6 +14,7 @@ import {
   Avatar,
   Snackbar,
   Alert,
+  Button,
 } from "@mui/material";
 import { GoogleMap, Marker, useLoadScript } from "@react-google-maps/api";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -22,6 +23,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import EmailIcon from "@mui/icons-material/Email";
 import PhoneIcon from "@mui/icons-material/Phone";
+import DateIcon from "@mui/icons-material/CalendarMonth";
 import BusinessIcon from "@mui/icons-material/Business";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
@@ -29,6 +31,7 @@ import BadgeIcon from "@mui/icons-material/Badge";
 import WcIcon from "@mui/icons-material/Wc";
 
 const API_URL = "https://armstrong-api.vercel.app/api";
+
 
 const PendingSpecialists = () => {
   const [specialists, setSpecialists] = useState([]);
@@ -42,6 +45,7 @@ const PendingSpecialists = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterGender, setFilterGender] = useState("");
   const [filterSpecialization, setFilterSpecialization] = useState("");
+  const [showPRC, setShowPRC] = useState(false);
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
@@ -497,6 +501,16 @@ const PendingSpecialists = () => {
                     label: selectedUser.phoneNumber,
                   },
                   {
+                    icon: <DateIcon color="primary" />,
+                    label: new Date(
+                      selectedUser.dateOfBirth
+                    ).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    }),
+                  },
+                  {
                     icon: <EmailIcon color="primary" />,
                     label: selectedUser.email,
                   },
@@ -522,6 +536,7 @@ const PendingSpecialists = () => {
                     <Typography variant="body1">{item.label}</Typography>
                   </Box>
                 ))}
+
                 {/* Clinic Map */}
                 {selectedUser.clinic && (
                   <>
@@ -533,6 +548,7 @@ const PendingSpecialists = () => {
                     <ClinicMap clinic={selectedUser.clinic} />
                   </>
                 )}
+
                 {/* License Image */}
                 {selectedUser.licenseNumber && (
                   <Box mt={4}>
@@ -557,6 +573,76 @@ const PendingSpecialists = () => {
                         objectFit: "cover",
                       }}
                     />
+
+                    {/* License Verification Data */}
+                    {selectedUser.licenseVerificationData && (
+                      <Box mt={2} ml={1}>
+                        {selectedUser.licenseVerificationData
+                          .extractedLicenseNumber && (
+                          <Typography variant="body2">
+                            <strong>Extracted License Number:</strong>{" "}
+                            {
+                              selectedUser.licenseVerificationData
+                                .extractedLicenseNumber
+                            }
+                          </Typography>
+                        )}
+                        {selectedUser.licenseVerificationData
+                          .extractedProfession && (
+                          <Typography variant="body2">
+                            <strong>Profession:</strong>{" "}
+                            {
+                              selectedUser.licenseVerificationData
+                                .extractedProfession
+                            }
+                          </Typography>
+                        )}
+                        {selectedUser.licenseVerificationData
+                          .confidenceScore !== null && (
+                          <Typography variant="body2">
+                            <strong>Confidence Score:</strong>{" "}
+                            {
+                              selectedUser.licenseVerificationData
+                                .confidenceScore
+                            }
+                          </Typography>
+                        )}
+
+                        {/* Verify Specialist Button + Embedded PRC Website */}
+                        <Box mt={2}>
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={() => setShowPRC(!showPRC)} // toggles iframe visibility
+                          >
+                            {showPRC
+                              ? "Hide PRC Verification"
+                              : "Verify Specialist"}
+                          </Button>
+
+                          {/* When button clicked, show the PRC site below */}
+                          {showPRC && (
+                            <Box
+                              mt={2}
+                              sx={{
+                                border: "1px solid #ccc",
+                                borderRadius: 2,
+                                overflow: "hidden",
+                                height: "80vh", // adjustable height
+                              }}
+                            >
+                              <iframe
+                                src="https://verification.prc.gov.ph/"
+                                title="PRC License Verification"
+                                width="100%"
+                                height="100%"
+                                style={{ border: "none" }}
+                              ></iframe>
+                            </Box>
+                          )}
+                        </Box>
+                      </Box>
+                    )}
                   </Box>
                 )}
               </Box>
