@@ -27,7 +27,8 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-const API_URL = "https://armstrong-api.vercel.app/api";
+// Replace with your own api or use my own and add the local url here
+const API_URL = "";
 
 const ArticleManagement = () => {
   const [articles, setArticles] = useState([]);

@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const API_URL = "https://armstrong-api.vercel.app/api";
+// Replace with your own api or use my own and add the local url here
+const API_URL = "";
 
 const authProvider = {
   login: async ({ username, password }) => {

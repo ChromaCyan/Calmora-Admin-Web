@@ -1,7 +1,8 @@
 // socket.js
 import { io } from "socket.io-client";
 
-const SOCKET_URL = "https://calmora-chat-real-time.onrender.com";
+// Replace with your own api or use my own and add the local url here (For notification)
+const SOCKET_URL = "";
 
 let socket = io(SOCKET_URL, {
   autoConnect: false, // connect only after login

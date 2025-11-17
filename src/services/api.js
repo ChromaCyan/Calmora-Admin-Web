@@ -1,7 +1,8 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "https://armstrong-api.vercel.app/api", 
+  // Replace with your own api or use my own and add the local url here
+  baseURL: "", 
 });
 
 API.interceptors.request.use((config) => {

@@ -1,6 +1,7 @@
 import simpleRestProvider from "ra-data-simple-rest";
 
-const API_URL = "https://armstrong-api.vercel.app/api";
+// Replace with your own api or use my own and add the local url here
+const API_URL = "";
 
 // Attach JWT to every request
 const fetchJsonWithAuth = async (url, options = {}) => {
