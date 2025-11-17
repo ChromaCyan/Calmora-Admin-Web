@@ -2,7 +2,8 @@ import axios from "axios";
 
 export const reverseGeocode = async (lat, lng) => {
   try {
-    const apiKey = "AIzaSyBkOkeLLzzjneBUpi8o36ujiaD-Yahu9O8";  
+    // Replace with your own api key from google maps 
+    const apiKey = "";  
     const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${apiKey}`;
 
     const response = await axios.get(url);

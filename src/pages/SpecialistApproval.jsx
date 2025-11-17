@@ -30,7 +30,8 @@ import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
 import BadgeIcon from "@mui/icons-material/Badge";
 import WcIcon from "@mui/icons-material/Wc";
 
-const API_URL = "https://armstrong-api.vercel.app/api";
+// Replace with your own api or use my own and add the local url here
+const API_URL = "";
 
 
 const PendingSpecialists = () => {

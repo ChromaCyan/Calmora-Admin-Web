@@ -27,7 +27,8 @@ import WcIcon from "@mui/icons-material/Wc";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import axios from "axios";
 
-const API_URL = "https://armstrong-api.vercel.app/api/auth";
+// Replace with your own api or use my own and add the local url here
+const API_URL = "";
 
 const PendingArticles = () => {
   const [articles, setArticles] = useState([]);
