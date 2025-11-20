@@ -2,7 +2,7 @@ import axios from "axios";
 
 const API = axios.create({
   // Replace with your own api or use my own and add the local url here
-  baseURL: "", 
+  baseURL: "https://calmora-api.vercel.app/api", 
 });
 
 API.interceptors.request.use((config) => {

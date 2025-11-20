@@ -1,7 +1,7 @@
 import simpleRestProvider from "ra-data-simple-rest";
 
 // Replace with your own api or use my own and add the local url here
-const API_URL = "";
+const API_URL = "https://calmora-api.vercel.app/api";
 
 // Attach JWT to every request
 const fetchJsonWithAuth = async (url, options = {}) => {

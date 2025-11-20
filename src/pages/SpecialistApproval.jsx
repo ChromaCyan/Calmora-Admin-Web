@@ -31,7 +31,7 @@ import BadgeIcon from "@mui/icons-material/Badge";
 import WcIcon from "@mui/icons-material/Wc";
 
 // Replace with your own api or use my own and add the local url here
-const API_URL = "";
+const API_URL = "https://calmora-api.vercel.app/api";
 
 
 const PendingSpecialists = () => {

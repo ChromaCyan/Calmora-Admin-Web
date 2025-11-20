@@ -28,7 +28,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import axios from "axios";
 
 // Replace with your own api or use my own and add the local url here
-const API_URL = "";
+const API_URL = "https://calmora-api.vercel.app/api";
 
 const PendingArticles = () => {
   const [articles, setArticles] = useState([]);

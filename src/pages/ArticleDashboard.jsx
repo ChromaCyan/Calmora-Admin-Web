@@ -28,7 +28,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 
 // Replace with your own api or use my own and add the local url here
-const API_URL = "";
+const API_URL = "https://calmora-api.vercel.app/api";
 
 const ArticleManagement = () => {
   const [articles, setArticles] = useState([]);
